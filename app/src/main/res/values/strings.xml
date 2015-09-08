@@ -6,6 +6,7 @@
 
     <!-- Detail fragment -->
     <string name="startButton">Start Testing</string>
+    <string name="uuid">UUID : </string>
 
 
     <!-- Main Fragment -->
