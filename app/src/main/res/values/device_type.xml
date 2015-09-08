@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="nde">
+        <item name="1">nde</item>
+    </string-array>
+    <string-array name="jaguar">
+        <item name="1">be467</item>
+        <item name="1">fe410</item>
+    </string-array>
+    <string-array name="krillReader">
+        <item name="1">mt20w</item>
+    </string-array>
+    <string-array name="gwe">
+        <item name="gateway_1">gwe</item>
+        <item name="gateway_2">gateway</item>
+    </string-array>
+</resources>
