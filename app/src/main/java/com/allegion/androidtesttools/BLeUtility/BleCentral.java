@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -70,13 +71,21 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
 
     public void startScan(){
         Log.d(LOG_TAG,"Start scanning");
-//        if(scheduledThreadPoolExecutor == null || scheduledThreadPoolExecutor.isShutdown()|| scheduledThreadPoolExecutor.isTerminated()){
+        devices.clear();
+        mBluetoothAdapter.startLeScan(BleCentral.this);
+//        if(scheduledThreadPoolExecutor == null || scheduledThreadPoolExecutor.isShutdown()|| scheduledThreadPoolExecutor.isTerminated()) {
 //            scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(2);
 //            scheduledThreadPoolExecutor.scheduleAtFixedRate(mStartRunnable,0,20, TimeUnit.SECONDS);
-//            scheduledThreadPoolExecutor.scheduleAtFixedRate(mStopRunnable,10,20,TimeUnit.SECONDS);
-        mBluetoothAdapter.startLeScan(this);
-
-       // }
+//         scheduledThreadPoolExecutor.scheduleWithFixedDelay(mStopRunnable, 10, 20, TimeUnit.SECONDS);
+            Handler handlerTimer = new Handler();
+            handlerTimer.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(LOG_TAG,"stop scan runnable is called");
+                    mBluetoothAdapter.stopLeScan(BleCentral.this);
+                }
+            },10000);
+        //}
     }
 
     private Runnable mStartRunnable = new Runnable() {
@@ -90,7 +99,7 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
         @Override
         public void run() {
             mBluetoothAdapter.stopLeScan(BleCentral.this);
-            bleScanDevicesListener.onBleDevicesList(devices, null);
+            //bleScanDevicesListener.onBleDevicesList(devices, null);
         }
     };
 
@@ -101,6 +110,9 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
         if(device !=null) {
             String deviceName = device.getName() == null ? "" : device.getName();
             String deviceAddress = device.getAddress() == null ? "" : device.getAddress();
+            Advertisement advert = AdvertisementParser.parseUUIDs(scanRecord);
+            if(!isAllegionDevice(advert))
+                return;
             Log.d(LOG_TAG, " Information about the device " + " | " + deviceName + " | " + deviceAddress);
             bleScanDeviceFoundListener.onBleDeviceFound(device, null);
             devices.add(device);
@@ -116,6 +128,21 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
 
         mBluetoothAdapter.stopLeScan(this);
 
+    }
+
+    private boolean isAllegionDevice(Advertisement advertisement) {
+        if (!advertisement.isAllegion())
+            return false;
+
+//        for (UUID service : advertisement.getUuids())
+//            for (UUID lockService : serviceUuids)
+//                if (service.compareTo(lockService) == 0)
+//                    return true;
+//
+//        Log.d(LOG_TAG, "Failed UUID check");
+//
+//        return false;
+        return true;
     }
 
 }

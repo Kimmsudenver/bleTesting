@@ -1,17 +1,20 @@
 package com.allegion.androidtesttools;
 
-import android.support.v7.app.ActionBarActivity;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements MainActivityFragment.DeviceClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_main);
+    //   getFragmentManager().beginTransaction().add(R.id.mainFragment,new MainActivityFragment(),null);
+
     }
 
 
@@ -35,5 +38,15 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDeviceClick(BluetoothDevice device) {
+        device_detail frag = device_detail.newInstance(device.getName(), device);
+       //setContentView(R.layout.fragment_device_detail);
+//        android.support.v4.app.FragmentManager manager = MainActivity.this.getSupportFragmentManager();
+//        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+//        transaction.replace(R.id.container, frag);
+//        transaction.commit();
     }
 }

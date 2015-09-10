@@ -1,13 +1,15 @@
 package com.allegion.androidtesttools;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.bluetooth.BluetoothDevice;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 /**
@@ -18,17 +20,21 @@ import android.view.ViewGroup;
  * Use the {@link device_detail#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class device_detail extends Fragment {
+public class device_detail extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String NAME = "name";
+    private static final String ADDRESS = "address";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String name;
+    private String address;
+    private TextView nameField;
+    private TextView addressField;
+    private TextView testTimes, successTimes, failTimes;
+    private Button startTesting;
 
-    private OnFragmentInteractionListener mListener;
+//    private OnFragmentInteractionListener mListener;
     private static BluetoothDevice mBluetoothDevice;
 
     /**
@@ -41,8 +47,9 @@ public class device_detail extends Fragment {
     public static device_detail newInstance(String name, BluetoothDevice device) {
         device_detail fragment = new device_detail();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, name);
-        args.putString(ARG_PARAM2, device.getAddress());
+        mBluetoothDevice = device;
+        args.putString(NAME, name);
+        args.putString(ADDRESS, device.getAddress());
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,41 +61,94 @@ public class device_detail extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_device_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_device_detail, container, false);
+        Bundle bundle = this.getArguments();
+        if (bundle.containsKey(NAME)) {
+            name = getArguments().getString(NAME);
+        }
+        if(bundle.containsKey(ADDRESS)){
+            address = getArguments().getString(ADDRESS);
+        }
+        populateView(view);
+        configureView(view);
+        return view;
+    }
+
+    public void populateView(View view){
+        nameField = (TextView)view.findViewById(R.id.deviceName);
+        addressField = (TextView) view.findViewById(R.id.deviceAddress);
+        testTimes = (TextView) view.findViewById(R.id.testTimes);
+        successTimes = (TextView) view.findViewById(R.id.success);
+        failTimes = (TextView) view.findViewById(R.id.fail);
+        startTesting = (Button) view.findViewById(R.id.startTesting);
+        startTesting.setOnClickListener(this);
+
+    }
+
+    public void configureView(View view){
+        if(name != null && address !=null){
+            nameField.setText(name);
+            addressField.setText(address);
+        }
+
+    }
+
+    public void startTest(){
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        activity.setContentView(R.layout.fragment_device_detail);
+//        try {
+//            mListener = (OnFragmentInteractionListener) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
     }
 
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+       // mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.startTesting:
+                startTest();
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     /**

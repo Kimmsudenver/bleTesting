@@ -6,13 +6,21 @@
 
     <!-- Detail fragment -->
     <string name="startButton">Start Testing</string>
+    <string name="deviceName">Name : </string>
     <string name="uuid">UUID : </string>
+    <string name="address">Address : </string>
+    <string name="testTimes">Test Times : </string>
+    <string name="success">Success : </string>
+    <string name="fail">Fail : </string>
 
 
     <!-- Main Fragment -->
     <string name="stopScanButton">Stop Scan</string>
     <string name="startScan">Start Scan</string>
 
+
+    <!-- Number -->
+    <string name="placeHolder">0</string>
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

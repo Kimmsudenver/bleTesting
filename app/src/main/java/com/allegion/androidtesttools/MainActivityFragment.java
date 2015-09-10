@@ -1,9 +1,12 @@
 package com.allegion.androidtesttools;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +34,17 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
     Button refresh;
     public final static String LOG_TAG = MainActivityFragment.class.getSimpleName();
     ArrayAdapter<String> adapter;
+    ArrayList<BluetoothDevice> devicesPool = new ArrayList<BluetoothDevice>();
+    DeviceClickListener deviceClickListener;
 
 
-
+public interface DeviceClickListener{
+     void onDeviceClick(BluetoothDevice device);
+}
 
     public MainActivityFragment() {
+
+
     }
 
     @Override
@@ -57,6 +66,17 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
 
 
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            deviceClickListener = (DeviceClickListener) activity;
+        } catch (ClassCastException e) {
+            Log.d(LOG_TAG, "Class cast exception on activity to OnLockConnectOperationListener");
+        }
+        setHasOptionsMenu(true);
+    }
     public void getDeviceList(){
         bleCentral.startScan();
     }
@@ -64,6 +84,7 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
     public void displayList(){
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1,devicesInfo);
         deviceList.setAdapter(adapter);
+        deviceList.setOnItemClickListener(this);
     }
 
     @Override
@@ -72,6 +93,7 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
         if(device != null ) {
             String deviceInfo = device.getName() + " " + device.getAddress() + " | " ;
             Log.d(LOG_TAG, deviceInfo);
+            devicesPool.add(device);
             devicesInfo.add(deviceInfo);
             adapter.notifyDataSetChanged();
 
@@ -88,6 +110,9 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
                 break;
             case R.id.startScan:
                 devicesInfo.clear();
+                adapter.notifyDataSetChanged();
+                devicesPool.clear();
+                deviceList.setAdapter(adapter);
                 bleCentral.startScan();
                 break;
             default:
@@ -101,6 +126,16 @@ public class MainActivityFragment extends Fragment implements BleCentral.BleScan
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            BluetoothDevice currentDevice = devicesPool.get(position);
+        device_detail frag = device_detail.newInstance(currentDevice.getName(), currentDevice);
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.addToBackStack(null);
+        transaction.add(R.id.container,frag, "detailFragment");
+        transaction.commit();
+        getFragmentManager().executePendingTransactions();
+///        deviceClickListener.onDeviceClick(currentDevice);
+
 
     }
 }
