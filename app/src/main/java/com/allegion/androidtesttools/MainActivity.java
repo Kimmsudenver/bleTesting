@@ -2,18 +2,20 @@ package com.allegion.androidtesttools;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity implements MainActivityFragment.DeviceClickListener{
-
+public class MainActivity extends FragmentActivity implements MainActivityFragment.DeviceClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("Main activity", "onCreate is called");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_main);
-    //   getFragmentManager().beginTransaction().add(R.id.mainFragment,new MainActivityFragment(),null);
+        setContentView(R.layout.activity_main);
+        MainActivityFragment main = new MainActivityFragment();
+       getFragmentManager().beginTransaction().add(R.id.fragment,main,null);
 
     }
 

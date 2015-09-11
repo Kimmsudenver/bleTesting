@@ -3,7 +3,10 @@ package com.allegion.androidtesttools.BLeUtility;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -29,7 +32,11 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
     public Map<String, BluetoothDevice> allDevices = new HashMap<String, BluetoothDevice>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
     static ArrayList<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
-    public final static String LOG_TAG = BleCentral.class.getSimpleName();
+    private BluetoothGatt gatt;
+    private static  long connectStartTime, connectTime, disconnectStartTime, disconnectTime;
+    private static final String LOG_TAG = BleCentral.class.getSimpleName();
+    private static Context mcontext;
+
 
 
 
@@ -65,6 +72,7 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
         BluetoothManager mBluetoothManager = (BluetoothManager) context.getSystemService(context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
         swordfish = Arrays.asList(mContext.getResources().getStringArray(R.array.nde));
+        if(gatt != null ){gatt.close();}
 
     }
 
@@ -144,5 +152,57 @@ public class BleCentral extends Service implements BluetoothAdapter.LeScanCallba
 //        return false;
         return true;
     }
+
+    public void connect(Context context,BluetoothDevice device){
+        Log.d(LOG_TAG,"connect is called");
+        bleDevice = device;
+        mcontext = context;
+        gatt = device.connectGatt(context, false, mGattCallback);
+        gatt.connect();
+        connectStartTime = System.currentTimeMillis()/1000;
+
+    }
+
+    public void disconnect(){
+        Log.d(LOG_TAG, "diconnected is called");
+        gatt.disconnect();
+
+        gatt = bleDevice.connectGatt(mcontext,false,mGattCallback);
+        disconnectStartTime = System.currentTimeMillis()/1000;
+        gatt.connect();
+    }
+
+    private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            super.onConnectionStateChange(gatt, status, newState);
+            if(newState == BluetoothProfile.STATE_CONNECTED){
+                connectTime = System.currentTimeMillis()/1000 - connectStartTime;
+                Log.d("TIME", "connect Time " + +connectTime);
+                disconnect();
+
+            }
+            else if(newState == BluetoothProfile.STATE_DISCONNECTED){
+                disconnectTime = System.currentTimeMillis()/1000 - disconnectStartTime;
+                Log.d("TIME", "disconnect Time : " + disconnectTime);
+                connect(mcontext,bleDevice);
+            }
+            else if(newState == BluetoothProfile.STATE_CONNECTING){
+                Log.d(LOG_TAG,"Connecting");
+            }
+            else if( newState == BluetoothProfile.STATE_DISCONNECTING){
+                Log.d(LOG_TAG,"Disconnecting");
+            }
+        }
+    };
+
+    public void forceDisconnect(){
+        gatt.disconnect();
+        gatt.close();
+        gatt = null;
+    }
+
+
+
 
 }

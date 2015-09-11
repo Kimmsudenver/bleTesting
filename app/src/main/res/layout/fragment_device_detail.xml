@@ -22,10 +22,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/deviceName"/>
+            android:text="@string/devicename"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:text="@string/placeHolder"
             android:id="@+id/deviceName"/>
     </LinearLayout>
 
@@ -46,12 +47,23 @@
     </LinearLayout>
 
     <View style="@style/baseDividerStyle"/>
-
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/startButton"
-        android:id="@+id/startTesting"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/startButton"
+            android:id="@+id/startTesting"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stoptest"
+            android:id="@+id/stopTest"/>
+    </LinearLayout>
 
     <View style="@style/baseDividerStyle"/>
 

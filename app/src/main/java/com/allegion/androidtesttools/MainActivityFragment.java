@@ -1,12 +1,10 @@
 package com.allegion.androidtesttools;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +45,13 @@ public interface DeviceClickListener{
 
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,8 +64,8 @@ public interface DeviceClickListener{
         bleCentral = new BleCentral();
         bleCentral.setContext(getActivity().getApplicationContext());
         bleCentral.bleScanDeviceFoundListener = this;
-        displayList();
         getDeviceList();
+        displayList();
         return view;
     }
 
@@ -109,6 +114,7 @@ public interface DeviceClickListener{
                 bleCentral.stopScan();
                 break;
             case R.id.startScan:
+                Log.d(LOG_TAG,"start scan clicked");
                 devicesInfo.clear();
                 adapter.notifyDataSetChanged();
                 devicesPool.clear();
@@ -128,12 +134,11 @@ public interface DeviceClickListener{
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             BluetoothDevice currentDevice = devicesPool.get(position);
         device_detail frag = device_detail.newInstance(currentDevice.getName(), currentDevice);
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.addToBackStack(null);
-        transaction.add(R.id.container,frag, "detailFragment");
+        android.app.FragmentManager manager =getActivity().getFragmentManager();
+        android.app.FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.fragment,frag, "detailFragment");
         transaction.commit();
-        getFragmentManager().executePendingTransactions();
+     //   getFragmentManager().executePendingTransactions();
 ///        deviceClickListener.onDeviceClick(currentDevice);
 
 

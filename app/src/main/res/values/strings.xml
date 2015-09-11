@@ -6,12 +6,13 @@
 
     <!-- Detail fragment -->
     <string name="startButton">Start Testing</string>
-    <string name="deviceName">Name : </string>
+    <string name="devicename">Name : </string>
     <string name="uuid">UUID : </string>
     <string name="address">Address : </string>
     <string name="testTimes">Test Times : </string>
     <string name="success">Success : </string>
     <string name="fail">Fail : </string>
+    <string name="stoptest">Stop Testing</string>
 
 
     <!-- Main Fragment -->

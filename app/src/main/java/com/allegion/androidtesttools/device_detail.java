@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.allegion.androidtesttools.BLeUtility.BleCentral;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,10 +31,11 @@ public class device_detail extends Fragment implements View.OnClickListener{
     // TODO: Rename and change types of parameters
     private String name;
     private String address;
-    private TextView nameField;
+     TextView nameField;
     private TextView addressField;
     private TextView testTimes, successTimes, failTimes;
-    private Button startTesting;
+    private Button startTesting, stopTesting;
+    private BleCentral bleCentral;
 
 //    private OnFragmentInteractionListener mListener;
     private static BluetoothDevice mBluetoothDevice;
@@ -69,6 +72,9 @@ public class device_detail extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_device_detail, container, false);
+        bleCentral = new BleCentral();
+        bleCentral.setContext(getActivity().getApplicationContext());
+        bleCentral.connect(getActivity().getApplicationContext(),mBluetoothDevice);
         Bundle bundle = this.getArguments();
         if (bundle.containsKey(NAME)) {
             name = getArguments().getString(NAME);
@@ -83,6 +89,8 @@ public class device_detail extends Fragment implements View.OnClickListener{
 
     public void populateView(View view){
         nameField = (TextView)view.findViewById(R.id.deviceName);
+       stopTesting = (Button) view.findViewById(R.id.stopTest);
+        stopTesting.setOnClickListener(this);
         addressField = (TextView) view.findViewById(R.id.deviceAddress);
         testTimes = (TextView) view.findViewById(R.id.testTimes);
         successTimes = (TextView) view.findViewById(R.id.success);
@@ -101,7 +109,11 @@ public class device_detail extends Fragment implements View.OnClickListener{
     }
 
     public void startTest(){
+        bleCentral.connect(getActivity().getApplicationContext(),mBluetoothDevice);
+    }
 
+    public void stopTest(){
+        bleCentral.forceDisconnect();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -114,7 +126,8 @@ public class device_detail extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        activity.setContentView(R.layout.fragment_device_detail);
+       // activity.setContentView(R.layout.fragment_device_detail);
+
 //        try {
 //            mListener = (OnFragmentInteractionListener) activity;
 //        } catch (ClassCastException e) {
@@ -139,6 +152,9 @@ public class device_detail extends Fragment implements View.OnClickListener{
         switch(v.getId()){
             case R.id.startTesting:
                 startTest();
+                break;
+            case R.id.stopTest:
+                stopTest();
                 break;
             default:
                 break;
